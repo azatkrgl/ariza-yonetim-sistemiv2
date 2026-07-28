@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Süper Admin Paneli | Terminal</title>
@@ -7,42 +7,49 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0b1121; color: #e2e8f0; margin: 0; overflow-x: hidden;}
+        body { font-family: 'Poppins', sans-serif; background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); background-attachment: fixed; color: #334155; margin: 0; overflow-x: hidden;}
+        
+        /* Glassmorphism Ortak Sınıfı */
+        .glass-panel { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
         
         /* Sol Menü (Sidebar) */
-        .sidebar { height: 100vh; width: 260px; position: fixed; top: 0; left: 0; background: #0f172a; border-right: 1px solid #1e293b; padding-top: 20px; box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 100;}
-        .sidebar-brand { font-size: 1.2rem; font-weight: 700; text-align: center; margin-bottom: 40px; color: #38bdf8; letter-spacing: 1px;}
-        .nav-pills .nav-link { color: #94a3b8; margin: 5px 15px; border-radius: 10px; padding: 12px 20px; font-weight: 500; transition: all 0.3s;}
-        .nav-pills .nav-link:hover { background-color: #1e293b; color: #f8fafc; transform: translateX(5px);}
-        .nav-pills .nav-link.active { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);}
+        .sidebar { height: 100vh; width: 260px; position: fixed; top: 0; left: 0; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(15px); border-right: 1px solid rgba(255, 255, 255, 0.6); padding-top: 20px; z-index: 100;}
+        .sidebar-brand { font-size: 1.2rem; font-weight: 700; text-align: center; margin-bottom: 40px; color: #0284c7; letter-spacing: 1px;}
+        .nav-pills .nav-link { color: #475569; margin: 5px 15px; border-radius: 10px; padding: 12px 20px; font-weight: 500; transition: all 0.3s;}
+        .nav-pills .nav-link:hover { background: rgba(255, 255, 255, 0.6); color: #0f172a; transform: translateX(5px);}
+        .nav-pills .nav-link.active { background: #ffffff; color: #0284c7; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255,255,255,0.9); font-weight: 600;}
         
         /* İçerik Alanı */
         .main-content { margin-left: 260px; padding: 30px; min-height: 100vh; }
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #1e293b; padding: 15px 30px; border-radius: 15px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px 30px; }
         
         /* İstatistik Kartları */
-        .stat-card { border-radius: 15px; padding: 25px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: transform 0.3s; border: 1px solid rgba(255,255,255,0.05);}
+        .stat-card { padding: 25px; position: relative; overflow: hidden; transition: transform 0.3s; }
         .stat-card:hover { transform: translateY(-5px); }
-        .stat-card i { position: absolute; right: -10px; bottom: -10px; font-size: 100px; opacity: 0.15; }
-        .bg-gradient-1 { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); }
-        .bg-gradient-2 { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
-        .bg-gradient-3 { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
-        .bg-gradient-4 { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); }
+        .stat-card i { position: absolute; right: -10px; bottom: -10px; font-size: 90px; opacity: 0.1; color: #000; }
+        .text-gradient-1 { color: #4f46e5; }
+        .text-gradient-2 { color: #d97706; }
+        .text-gradient-3 { color: #059669; }
+        .text-gradient-4 { color: #dc2626; }
         
         /* Tablolar ve Formlar */
-        .card-box { background: #1e293b; border-radius: 15px; padding: 25px; border: 1px solid #334155; box-shadow: 0 5px 20px rgba(0,0,0,0.2); margin-bottom: 30px;}
-        .table thead { background-color: #0f172a; color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;}
-        .table tbody tr { transition: all 0.2s; border-bottom: 1px solid #334155; }
-        .table tbody tr:hover { background-color: #0f172a; }
+        .card-box { padding: 25px; margin-bottom: 30px;}
+        .table { background: transparent; }
+        .table thead { font-size: 0.85rem; text-transform: uppercase; color: #64748b;}
+        .table thead th { border-bottom: 2px solid rgba(0,0,0,0.05); }
+        .table tbody tr { transition: all 0.2s; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .table tbody tr:hover { background-color: rgba(255,255,255,0.4); }
         .badge-custom { padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 0.75rem;}
         
-        /* Dark Mode Form Elementleri */
-        .form-control, .form-select { background-color: #0f172a !important; border: 1px solid #334155 !important; color: #f8fafc !important; }
-        .form-control:focus, .form-select:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
+        /* Form Elementleri */
+        .form-control, .form-select { background-color: rgba(255,255,255,0.5) !important; border: 1px solid rgba(255,255,255,0.8) !important; color: #334155 !important; }
+        .form-control:focus, .form-select:focus { background-color: rgba(255,255,255,0.8) !important; border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
         
         /* Butonlar */
-        .btn-modern { border-radius: 10px; font-weight: 600; padding: 10px 20px; transition: all 0.3s; }
-        .btn-danger-light { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-modern { border-radius: 10px; font-weight: 600; padding: 10px 20px; transition: all 0.3s; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); }
+        .btn-danger-light { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none;}
         .btn-danger-light:hover { background-color: #ef4444; color: white; }
     </style>
 </head>
@@ -51,7 +58,7 @@
     <!-- Sol Menü -->
     <div class="sidebar">
         <div class="sidebar-brand">
-            <i class="fa-solid fa-bolt me-2"></i>FABRİKA <span class="text-white">OS</span>
+            <i class="fa-solid fa-bolt me-2 text-warning"></i>FABRİKA <span class="text-secondary">OS</span>
         </div>
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <button class="nav-link active" id="v-pills-dashboard-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dashboard" type="button" role="tab">
@@ -70,12 +77,12 @@
     <div class="main-content">
         
         <!-- Üst Bilgi Çubuğu -->
-        <div class="top-header">
-            <h4 class="mb-0 fw-bold text-white">Süper Yönetici Paneli</h4>
+        <div class="top-header glass-panel">
+            <h4 class="mb-0 fw-bold text-dark">Süper Yönetici Paneli</h4>
             <div class="d-flex align-items-center">
                 <div class="me-4 text-end">
-                    <div class="fw-bold text-white" th:text="${session.aktifKullanici.adSoyad}"></div>
-                    <div class="text-info small">Yetki: SÜPER ADMİN</div>
+                    <div class="fw-bold text-primary" th:text="${session.aktifKullanici.adSoyad}"></div>
+                    <div class="text-muted small fw-medium">Yetki: SÜPER ADMİN</div>
                 </div>
                 <a href="/logout" class="btn btn-danger btn-modern"><i class="fa-solid fa-power-off me-1"></i> Çıkış</a>
             </div>
@@ -88,39 +95,39 @@
             <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel">
                 <div class="row mb-4">
                     <div class="col-md-3">
-                        <div class="stat-card bg-gradient-1">
-                            <h6 class="fw-bold mb-1">Toplam Kullanıcı</h6>
-                            <h2 class="fw-bold mb-0" th:text="${toplamKullanici}"></h2>
+                        <div class="stat-card glass-panel text-center">
+                            <h6 class="fw-bold mb-1 text-muted">Toplam Kullanıcı</h6>
+                            <h2 class="fw-bold mb-0 text-gradient-1" th:text="${toplamKullanici}"></h2>
                             <i class="fa-solid fa-users"></i>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stat-card bg-gradient-2">
-                            <h6 class="fw-bold mb-1">Toplam Arıza</h6>
-                            <h2 class="fw-bold mb-0" th:text="${toplamAriza}"></h2>
+                        <div class="stat-card glass-panel text-center">
+                            <h6 class="fw-bold mb-1 text-muted">Toplam Arıza</h6>
+                            <h2 class="fw-bold mb-0 text-gradient-2" th:text="${toplamAriza}"></h2>
                             <i class="fa-solid fa-file-invoice"></i>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stat-card bg-gradient-4">
-                            <h6 class="fw-bold mb-1">Bekleyen (Aktif)</h6>
-                            <h2 class="fw-bold mb-0" th:text="${aktifAriza}"></h2>
+                        <div class="stat-card glass-panel text-center">
+                            <h6 class="fw-bold mb-1 text-muted">Bekleyen (Aktif)</h6>
+                            <h2 class="fw-bold mb-0 text-gradient-4" th:text="${aktifAriza}"></h2>
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stat-card bg-gradient-3">
-                            <h6 class="fw-bold mb-1">Çözülen Arıza</h6>
-                            <h2 class="fw-bold mb-0" th:text="${cozulmusAriza}"></h2>
+                        <div class="stat-card glass-panel text-center">
+                            <h6 class="fw-bold mb-1 text-muted">Çözülen Arıza</h6>
+                            <h2 class="fw-bold mb-0 text-gradient-3" th:text="${cozulmusAriza}"></h2>
                             <i class="fa-solid fa-check-double"></i>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card-box text-center py-5">
-                    <img src="https://cdn-icons-png.flaticon.com/512/6122/6122861.png" width="150" class="mb-4 opacity-50" alt="Server" style="filter: brightness(0) invert(1);">
-                    <h4 class="fw-bold text-white">Sistem Sorunsuz Çalışıyor</h4>
-                    <p class="text-secondary">Tüm arıza ve kullanıcı logları bulut sunucuya senkronize edilmiştir. <br> Sol menüden modülleri yönetebilirsiniz.</p>
+                <div class="card-box glass-panel text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6122/6122861.png" width="130" class="mb-4 opacity-75" alt="Server">
+                    <h4 class="fw-bold text-dark">Sistem Sorunsuz Çalışıyor</h4>
+                    <p class="text-muted fw-medium">Tüm arıza ve kullanıcı logları bulut sunucuya senkronize edilmiştir. <br> Sol menüden modülleri yönetebilirsiniz.</p>
                 </div>
             </div>
 
@@ -128,23 +135,23 @@
             <div class="tab-pane fade" id="v-pills-users" role="tabpanel">
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="card-box">
-                            <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-user-plus text-info me-2"></i>Personel Ekle</h5>
+                        <div class="card-box glass-panel">
+                            <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-user-plus text-primary me-2"></i>Personel Ekle</h5>
                             <form action="/super-admin/kullanici/kaydet" method="post">
                                 <div class="mb-3">
-                                    <label class="form-label text-secondary small fw-bold">SİCİL NO</label>
+                                    <label class="form-label text-muted small fw-bold">SİCİL NO</label>
                                     <input type="text" name="sicilNo" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-secondary small fw-bold">AD SOYAD</label>
+                                    <label class="form-label text-muted small fw-bold">AD SOYAD</label>
                                     <input type="text" name="adSoyad" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-secondary small fw-bold">ŞİFRE</label>
+                                    <label class="form-label text-muted small fw-bold">ŞİFRE</label>
                                     <input type="text" name="sifre" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label text-secondary small fw-bold">YETKİ / ROL</label>
+                                    <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
                                     <select name="rol" class="form-select form-select-lg" required>
                                         <option value="CALISAN">ÇALIŞAN (Saha Personeli)</option>
                                         <option value="ADMIN">YÖNETİCİ (Teknik Servis)</option>
@@ -156,11 +163,11 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <div class="card-box">
-                            <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-address-book text-info me-2"></i>Sistemdeki Personeller</h5>
+                        <div class="card-box glass-panel">
+                            <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-address-book text-primary me-2"></i>Sistemdeki Personeller</h5>
                             <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                                <table class="table table-borderless align-middle text-light">
-                                    <thead class="sticky-top">
+                                <table class="table align-middle">
+                                    <thead class="sticky-top" style="background: rgba(245, 247, 250, 0.9);">
                                         <tr>
                                             <th>Sicil No</th>
                                             <th>Ad Soyad</th>
@@ -171,9 +178,9 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="kul : ${kullanicilar}">
-                                            <td class="fw-bold text-info" th:text="${kul.sicilNo}"></td>
-                                            <td th:text="${kul.adSoyad}"></td>
-                                            <td class="text-secondary" th:text="${kul.sifre}"></td>
+                                            <td class="fw-bold text-primary" th:text="${kul.sicilNo}"></td>
+                                            <td class="fw-medium text-dark" th:text="${kul.adSoyad}"></td>
+                                            <td class="text-muted" th:text="${kul.sifre}"></td>
                                             <td>
                                                 <span th:if="${kul.rol == 'SUPER_ADMIN'}" class="badge bg-danger badge-custom">SÜPER ADMİN</span>
                                                 <span th:if="${kul.rol == 'ADMIN'}" class="badge bg-primary badge-custom">YÖNETİCİ</span>
@@ -195,11 +202,11 @@
 
             <!-- 3. SEKME: TÜM ARIZA KAYITLARI -->
             <div class="tab-pane fade" id="v-pills-faults" role="tabpanel">
-                <div class="card-box">
-                    <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-database text-info me-2"></i>Tüm Arıza Veritabanı</h5>
+                <div class="card-box glass-panel">
+                    <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-database text-primary me-2"></i>Tüm Arıza Veritabanı</h5>
                     <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
-                        <table class="table table-hover align-middle text-light">
-                            <thead class="sticky-top">
+                        <table class="table align-middle">
+                            <thead class="sticky-top" style="background: rgba(245, 247, 250, 0.9);">
                                 <tr>
                                     <th>Tarih</th>
                                     <th>Bildiren (Sicil)</th>
@@ -212,22 +219,22 @@
                             </thead>
                             <tbody>
                                 <tr th:each="kayit : ${tumArizalar}">
-                                    <td class="small text-secondary" th:text="${kayit.arizaTarihiSaati}"></td>
+                                    <td class="small text-muted fw-medium" th:text="${kayit.arizaTarihiSaati}"></td>
                                     <td>
-                                        <div class="fw-bold text-info" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
-                                        <div class="small text-secondary" th:text="${kayit.bildirenKullanici.sicilNo}"></div>
+                                        <div class="fw-bold text-primary" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
+                                        <div class="small text-muted fw-medium" th:text="${kayit.bildirenKullanici.sicilNo}"></div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-dark text-light border border-secondary" th:text="${kayit.uretimHatti}"></span><br>
-                                        <span class="small fw-medium" th:text="${kayit.arizaTuru}"></span>
+                                        <span class="badge bg-white text-dark border border-secondary" th:text="${kayit.uretimHatti}"></span><br>
+                                        <span class="small fw-bold text-secondary" th:text="${kayit.arizaTuru}"></span>
                                     </td>
-                                    <td class="small" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${kayit.arizaAciklamasi}"></td>
+                                    <td class="small fw-medium text-dark" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${kayit.arizaAciklamasi}"></td>
                                     <td>
-                                        <span th:if="${kayit.arizaDurumu == 'Aktif'}" class="badge bg-warning text-dark badge-custom">Bekliyor</span>
-                                        <span th:if="${kayit.arizaDurumu == 'Çözüldü'}" class="badge bg-success badge-custom">Çözüldü</span>
+                                        <span th:if="${kayit.arizaDurumu == 'Aktif'}" class="badge bg-warning text-dark badge-custom shadow-sm">Bekliyor</span>
+                                        <span th:if="${kayit.arizaDurumu == 'Çözüldü'}" class="badge bg-success badge-custom shadow-sm">Çözüldü</span>
                                     </td>
                                     <td>
-                                        <h5 class="mb-0 fw-bold" th:classappend="${kayit.oncelikPuani >= 80 ? 'text-danger' : 'text-info'}" th:text="${kayit.oncelikPuani}"></h5>
+                                        <h5 class="mb-0 fw-bold" th:classappend="${kayit.oncelikPuani >= 80 ? 'text-danger' : 'text-primary'}" th:text="${kayit.oncelikPuani}"></h5>
                                     </td>
                                     <td class="text-end">
                                         <a th:if="${kayit.arizaDurumu == 'Aktif'}" th:href="@{/cozuldu/{id}(id=${kayit.id})}" class="btn btn-success btn-sm btn-modern me-1" title="Çözüldü İşaretle"><i class="fa-solid fa-check"></i></a>
