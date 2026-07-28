@@ -24,11 +24,24 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (kullaniciRepository.count() == 0) {
-            List<Kullanici> kullanicilar = new ArrayList<>();
+        
+        // 1. ADIM: SÜPER ADMİNİ HER HALÜKARDA KONTROL ET VE YOKSA ZORLA EKLE
+        boolean superAdminVar = false;
+        for (Kullanici k : kullaniciRepository.findAll()) {
+            if ("9999".equals(k.getSicilNo())) {
+                superAdminVar = true;
+                break;
+            }
+        }
+        
+        if (!superAdminVar) {
+            kullaniciRepository.save(new Kullanici("9999", "Süper Yöneticim", "super123", "SUPER_ADMIN"));
+            System.out.println("--- EKSİK OLAN SÜPER ADMIN (9999) SİSTEME ZORLA EKLENDİ ---");
+        }
 
-            // 1 SÜPER ADMIN (Sistemi ve kullanıcıları yönetecek hesap)
-            kullanicilar.add(new Kullanici("9999", "Süper Yöneticim", "super123", "SUPER_ADMIN"));
+        // 2. ADIM: DİĞER KULLANICILARIN EKLENMESİ (Sadece içerisi boşsa veya sadece 1 kişi varsa)
+        if (kullaniciRepository.count() <= 1) {
+            List<Kullanici> kullanicilar = new ArrayList<>();
 
             // 5 Yönetici (Sadece Arıza Paneli)
             kullanicilar.add(new Kullanici("1001", "Ahmet Yılmaz", "admin123", "ADMIN"));
@@ -49,10 +62,10 @@ public class DataSeeder implements CommandLineRunner {
             }
 
             kullaniciRepository.saveAll(kullanicilar);
-            System.out.println("--- 1 SÜPER ADMIN, 5 ADMIN VE 50 PERSONEL EKLENDİ ---");
+            System.out.println("--- 5 ADMIN VE 50 PERSONEL VERITABANINA AKTARILDI ---");
         }
 
-        // Arıza verileri kısmı seninkiyle birebir aynı...
+        // 3. ADIM: ARIZA VERİLERİNİ EKLE
         if (arizaRepository.count() == 0) {
             List<Kullanici> calisanlar = kullaniciRepository.findAll();
             calisanlar.removeIf(k -> "ADMIN".equals(k.getRol()) || "SUPER_ADMIN".equals(k.getRol()));
