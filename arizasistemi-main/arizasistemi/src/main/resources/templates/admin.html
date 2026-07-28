@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Fabrika Arıza İzleme Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; color: #333; }
+        .navbar-custom { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        .table-container { background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+        .table thead { background-color: #f8fafc; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        .badge-custom { padding: 6px 12px; border-radius: 30px; font-weight: 600; font-size: 0.8rem; }
+        .btn-delete { background-color: #dcfce7; color: #16a34a; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; }
+        .btn-delete:hover { background-color: #16a34a; color: #ffffff; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom navbar-dark py-3 px-4 shadow-sm mb-4">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1 fw-bold fs-4">
+            <i class="fa-solid fa-industry text-warning me-2"></i> Fabrika Arıza İzleme Paneli
+        </span>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white fw-medium">
+                <i class="fa-solid fa-user-shield me-1 text-warning"></i> 
+                <span th:text="${session.aktifKullanici.adSoyad}"></span> 
+                <span class="badge bg-secondary ms-1 fw-normal" style="font-size: 0.7rem;">Yönetici</span>
+            </span>
+
+            <a href="/analiz" class="btn btn-primary fw-bold px-3 py-2 shadow-sm rounded-3 btn-sm" style="background-color: #6366f1; border: none;">
+                <i class="fa-solid fa-chart-pie me-1"></i> Analiz & Raporlar
+            </a>
+            <a href="/logout" class="btn btn-danger fw-bold px-3 py-2 shadow-sm rounded-3 btn-sm">
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+    <div class="table-container p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Tarih/Saat</th>
+                        <th>İhbar Eden Personel (Sicil)</th>
+                        <th>Sorunlu Hat</th>
+                        <th>Kategori</th>
+                        <th style="max-width: 250px;">Arıza Açıklaması</th>
+                        <th>Kritik Drm.</th>
+                        <th class="text-center">Puan</th>
+                        <th class="text-center">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="kayit : ${kayitlar}">
+                        <td th:text="${kayit.arizaTarihiSaati}"></td>
+                        <td>
+                            <div class="fw-bold text-primary" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
+                            <span class="text-muted small"><i class="fa-solid fa-id-card me-1"></i>Sicil: <span th:text="${kayit.bildirenKullanici.sicilNo}"></span></span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border fw-normal" th:text="${kayit.uretimHatti}"></span>
+                        </td>
+                        <td>
+                            <span class="fw-medium" th:text="${kayit.arizaTuru}"></span>
+                            <div th:if="${kayit.arizaTuru == 'Diğer'}" class="text-primary small fw-bold" th:text="'Tür: ' + ${kayit.arizaTuruDiger}"></div>
+                        </td>
+                        <td style="max-width: 250px;">
+                            <span class="small text-muted" th:text="${kayit.arizaAciklamasi}"></span>
+                        </td>
+                        <td>
+                            <span th:if="${kayit.isgRiskiVarMi}" class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">İSG</span>
+                            <span th:if="${kayit.durusVarMi}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill">Duruş</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="fs-5 fw-bold" th:text="${kayit.oncelikPuani}"></div>
+                            <span th:if="${kayit.oncelikPuani >= 80}" class="badge-custom bg-danger text-white" th:text="${kayit.oncelikSeviyesi}"></span>
+                            <span th:if="${kayit.oncelikPuani >= 50 and kayit.oncelikPuani lt 80}" class="badge-custom bg-warning text-dark" th:text="${kayit.oncelikSeviyesi}"></span>
+                            <span th:if="${kayit.oncelikPuani >= 30 and kayit.oncelikPuani lt 50}" class="badge-custom bg-info text-dark" th:text="${kayit.oncelikSeviyesi}"></span>
+                            <span th:if="${kayit.oncelikPuani lt 30}" class="badge-custom bg-secondary text-white" th:text="${kayit.oncelikSeviyesi}"></span>
+                        </td>
+                        <td class="text-center">
+                            <a th:href="@{/duzenle/{id}(id=${kayit.id})}" class="btn btn-warning btn-sm px-2 py-2 me-1 text-white fw-bold" title="Düzenle">
+                               <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <a th:href="@{/cozuldu/{id}(id=${kayit.id})}" 
+                               class="btn btn-delete btn-sm px-3 py-2" 
+                               onclick="return confirm('Bu arızayı çözüldü olarak arşivlemek istediğinize emin misiniz?')">
+                               <i class="fa-solid fa-check-double me-1"></i> Çözüldü
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

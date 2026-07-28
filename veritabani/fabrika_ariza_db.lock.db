@@ -1,0 +1,6 @@
+#FileLock
+#Fri Jul 24 09:08:09 TRT 2026
+hostName=Azat
+id=19f92bd07669d9684012e3a890b3b6ed5d3e9bd3a64
+method=file
+server=172.20.10.2\:52939
