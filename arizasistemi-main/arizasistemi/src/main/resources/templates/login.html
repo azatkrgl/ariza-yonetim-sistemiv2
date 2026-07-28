@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Fabrika Arıza Sistemi - Giriş</title>
@@ -7,41 +7,46 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0b1121; color: #e2e8f0; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: #1e293b; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid #334155; padding: 40px; width: 100%; max-width: 400px; }
+        body { font-family: 'Poppins', sans-serif; background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); height: 100vh; display: flex; align-items: center; justify-content: center; color: #334155; }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 20px; box-shadow: 0 15px 35px rgba(31, 38, 135, 0.1); padding: 40px; width: 100%; max-width: 400px; }
+        
         .login-header { text-align: center; margin-bottom: 30px; }
-        .login-header i { font-size: 3rem; color: #38bdf8; margin-bottom: 15px; }
-        .form-control { background-color: #0f172a !important; border: 1px solid #334155 !important; color: #f8fafc !important; padding: 12px 15px; border-radius: 10px; }
-        .form-control:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
-        .btn-login { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; font-weight: 600; padding: 12px; border-radius: 10px; transition: transform 0.2s; }
+        .login-header i { font-size: 3rem; color: #0284c7; margin-bottom: 15px; }
+        
+        .form-control { background-color: rgba(255,255,255,0.6) !important; border: 1px solid rgba(255,255,255,0.9) !important; color: #334155 !important; padding: 12px 15px; border-radius: 10px; }
+        .form-control:focus { background-color: rgba(255,255,255,0.9) !important; border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
+        .input-group-text { background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); color: #64748b; }
+        
+        .btn-login { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; font-weight: 600; padding: 12px; border-radius: 10px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); }
         .btn-login:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
+    <div class="glass-panel">
         <div class="login-header">
-            <i class="fa-solid fa-bolt"></i>
-            <h4 class="fw-bold text-white">Fabrika <span class="text-info">OS</span></h4>
-            <p class="text-secondary small">Sisteme giriş yapmak için bilgilerinizi girin</p>
+            <i class="fa-solid fa-bolt text-warning"></i>
+            <h4 class="fw-bold text-dark">Fabrika <span class="text-secondary">OS</span></h4>
+            <p class="text-muted small fw-medium">Sisteme giriş yapmak için bilgilerinizi girin</p>
         </div>
 
-        <div th:if="${hata}" class="alert alert-danger text-center fw-bold border-0 bg-danger text-white py-2" style="border-radius: 10px;">
+        <div th:if="${hata}" class="alert alert-danger text-center fw-bold border-0 text-white py-2 shadow-sm" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border-radius: 10px;">
             <i class="fa-solid fa-triangle-exclamation me-1"></i> <span th:text="${hata}"></span>
         </div>
 
         <form action="/login-kontrol" method="post">
             <div class="mb-3">
-                <label class="form-label text-secondary small fw-bold">SİCİL NO</label>
+                <label class="form-label text-muted small fw-bold">SİCİL NO</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-id-badge"></i></span>
+                    <span class="input-group-text"><i class="fa-solid fa-id-badge"></i></span>
                     <input type="text" name="sicilNo" class="form-control" placeholder="Sicil numaranızı girin" required>
                 </div>
             </div>
             <div class="mb-4">
-                <label class="form-label text-secondary small fw-bold">ŞİFRE</label>
+                <label class="form-label text-muted small fw-bold">ŞİFRE</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-lock"></i></span>
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                     <input type="password" name="sifre" class="form-control" placeholder="Şifrenizi girin" required>
                 </div>
             </div>

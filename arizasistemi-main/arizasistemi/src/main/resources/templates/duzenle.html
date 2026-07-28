@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Arıza Düzenle - Fabrika OS</title>
@@ -7,13 +7,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0b1121; color: #e2e8f0; }
-        .form-card { background: #1e293b; border-radius: 15px; padding: 30px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-top: 40px; }
-        .form-control, .form-select { background-color: #0f172a !important; border: 1px solid #334155 !important; color: #f8fafc !important; }
-        .form-control:focus, .form-select:focus { border-color: #f59e0b !important; box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25) !important; }
-        .form-check-input { background-color: #0f172a; border-color: #334155; }
-        .form-check-input:checked { background-color: #f59e0b; border-color: #f59e0b; }
-        .btn-modern { border-radius: 10px; font-weight: 600; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; color: white;}
+        body { font-family: 'Poppins', sans-serif; background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); background-attachment: fixed; color: #334155; }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); margin-top: 40px; padding: 30px; }
+        
+        .form-control, .form-select { background-color: rgba(255,255,255,0.6) !important; border: 1px solid rgba(255,255,255,0.9) !important; color: #334155 !important; }
+        .form-control:focus, .form-select:focus { background-color: rgba(255,255,255,0.9) !important; border-color: #f59e0b !important; box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25) !important; }
+        
+        .btn-modern { border-radius: 10px; font-weight: 600; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; color: white; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);}
+        .btn-modern:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -21,17 +23,17 @@
 <div class="container pb-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="form-card">
+            <div class="glass-panel">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold text-white m-0"><i class="fa-solid fa-pen-to-square text-warning me-2"></i>Kayıt Düzenle</h4>
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm" style="border-radius: 8px;"><i class="fa-solid fa-arrow-left me-1"></i> İptal ve Geri Dön</a>
+                    <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-pen-to-square text-warning me-2"></i>Kayıt Düzenle</h4>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm bg-white" style="border-radius: 8px;"><i class="fa-solid fa-arrow-left me-1"></i> İptal ve Geri Dön</a>
                 </div>
                 
                 <form th:action="@{/guncelle/{id}(id=${arizaKaydi.id})}" method="post">
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label text-secondary small fw-bold">ÜRETİM HATTI</label>
+                            <label class="form-label text-muted small fw-bold">ÜRETİM HATTI</label>
                             <select name="uretimHatti" class="form-select" required>
                                 <option value="Keçe" th:selected="${arizaKaydi.uretimHatti == 'Keçe'}">Keçe Hattı</option>
                                 <option value="Fitil" th:selected="${arizaKaydi.uretimHatti == 'Fitil'}">Fitil Hattı</option>
@@ -40,7 +42,7 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-secondary small fw-bold">ARIZA TÜRÜ</label>
+                            <label class="form-label text-muted small fw-bold">ARIZA TÜRÜ</label>
                             <select name="arizaTuru" class="form-select" id="arizaTuruSecici" required onchange="turKontrol()">
                                 <option value="Mekanik" th:selected="${arizaKaydi.arizaTuru == 'Mekanik'}">Mekanik</option>
                                 <option value="Elektrik" th:selected="${arizaKaydi.arizaTuru == 'Elektrik'}">Elektrik</option>
@@ -51,28 +53,28 @@
                     </div>
 
                     <div class="mb-3" id="digerKutusu" th:style="${arizaKaydi.arizaTuru == 'Diğer' ? 'display:block;' : 'display:none;'}">
-                        <label class="form-label text-secondary small fw-bold">DİĞER ARIZA TÜRÜ</label>
+                        <label class="form-label text-muted small fw-bold">DİĞER ARIZA TÜRÜ</label>
                         <input type="text" name="arizaTuruDiger" class="form-control" th:value="${arizaKaydi.arizaTuruDiger}">
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label text-secondary small fw-bold">ARIZA AÇIKLAMASI VE DETAYLAR</label>
+                        <label class="form-label text-muted small fw-bold">ARIZA AÇIKLAMASI VE DETAYLAR</label>
                         <textarea name="arizaAciklamasi" class="form-control" rows="4" required th:text="${arizaKaydi.arizaAciklamasi}"></textarea>
                     </div>
 
-                    <div class="p-3 mb-4 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid #334155;">
+                    <div class="p-3 mb-4 rounded" style="background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.9);">
                         <h6 class="fw-bold text-warning mb-3">Kritik Durum Parametreleri</h6>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="isgRiskiVarMi" id="isg" th:checked="${arizaKaydi.isgRiskiVarMi}">
-                            <label class="form-check-label text-light" for="isg">İş Sağlığı ve Güvenliği (İSG) Riski Var Mı?</label>
+                            <input class="form-check-input shadow-sm" type="checkbox" name="isgRiskiVarMi" id="isg" th:checked="${arizaKaydi.isgRiskiVarMi}">
+                            <label class="form-check-label text-dark fw-medium" for="isg">İş Sağlığı ve Güvenliği (İSG) Riski Var Mı?</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="durusVarMi" id="durus" th:checked="${arizaKaydi.durusVarMi}">
-                            <label class="form-check-label text-light" for="durus">Üretimde Duruş / Kesinti Var Mı?</label>
+                            <input class="form-check-input shadow-sm" type="checkbox" name="durusVarMi" id="durus" th:checked="${arizaKaydi.durusVarMi}">
+                            <label class="form-check-label text-dark fw-medium" for="durus">Üretimde Duruş / Kesinti Var Mı?</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="disaBagimliMi" id="dis" th:checked="${arizaKaydi.disaBagimliMi}">
-                            <label class="form-check-label text-light" for="dis">Dışa Bağımlı Bir Müdahale Gerekiyor Mu?</label>
+                            <input class="form-check-input shadow-sm" type="checkbox" name="disaBagimliMi" id="dis" th:checked="${arizaKaydi.disaBagimliMi}">
+                            <label class="form-check-label text-dark fw-medium" for="dis">Dışa Bağımlı Bir Müdahale Gerekiyor Mu?</label>
                         </div>
                     </div>
 
