@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Süper Admin - Sistem Yönetimi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; color: #333; }
+        .navbar-custom { background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); }
+        .card-container { background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+        .table thead { background-color: #f8fafc; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        .btn-delete { background-color: #fee2e2; color: #ef4444; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; }
+        .btn-delete:hover { background-color: #ef4444; color: #ffffff; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom navbar-dark py-3 px-4 shadow-sm mb-4">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1 fw-bold fs-4">
+            <i class="fa-solid fa-server text-warning me-2"></i> Sistem Yönetim Paneli
+        </span>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-white fw-medium">
+                <i class="fa-solid fa-crown me-1 text-warning"></i> 
+                <span th:text="${session.aktifKullanici.adSoyad}"></span> 
+                <span class="badge bg-danger ms-1 fw-normal" style="font-size: 0.7rem;">Süper Admin</span>
+            </span>
+            <a href="/logout" class="btn btn-light fw-bold px-3 py-2 shadow-sm rounded-3 btn-sm text-danger">
+                <i class="fa-solid fa-right-from-bracket me-1"></i> Çıkış
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+    <div class="row">
+        
+        <!-- Kullanıcı Ekleme Formu -->
+        <div class="col-md-4 mb-4">
+            <div class="card-container p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-plus text-primary me-2"></i>Yeni Kullanıcı Ekle</h5>
+                <form action="/super-admin/kullanici/kaydet" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium small">Sicil No</label>
+                        <input type="text" name="sicilNo" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium small">Ad Soyad</label>
+                        <input type="text" name="adSoyad" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium small">Şifre</label>
+                        <input type="text" name="sifre" class="form-control" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-medium small">Rol</label>
+                        <select name="rol" class="form-select" required>
+                            <option value="CALISAN">Çalışan (Kayıt Ekleyen)</option>
+                            <option value="ADMIN">Yönetici / Teknik (Arıza Çözen)</option>
+                            <option value="SUPER_ADMIN">Süper Admin (Sistem Yöneticisi)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">Kullanıcıyı Kaydet</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Listesi Tablosu -->
+        <div class="col-md-8">
+            <div class="card-container p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-users text-primary me-2"></i>Kayıtlı Kullanıcı Listesi</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Sicil No</th>
+                                <th>Ad Soyad</th>
+                                <th>Şifre</th>
+                                <th>Rol / Yetki</th>
+                                <th class="text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="kul : ${kullanicilar}">
+                                <td th:text="${kul.id}" class="text-muted"></td>
+                                <td th:text="${kul.sicilNo}" class="fw-bold"></td>
+                                <td th:text="${kul.adSoyad}"></td>
+                                <td th:text="${kul.sifre}" class="text-muted"></td>
+                                <td>
+                                    <span th:if="${kul.rol == 'SUPER_ADMIN'}" class="badge bg-danger">SÜPER ADMİN</span>
+                                    <span th:if="${kul.rol == 'ADMIN'}" class="badge bg-primary">YÖNETİCİ</span>
+                                    <span th:if="${kul.rol == 'CALISAN'}" class="badge bg-secondary">ÇALIŞAN</span>
+                                </td>
+                                <td class="text-center">
+                                    <a th:if="${kul.id != session.aktifKullanici.id}" 
+                                       th:href="@{/super-admin/kullanici/sil/{id}(id=${kul.id})}" 
+                                       class="btn btn-delete btn-sm px-3 py-2"
+                                       onclick="return confirm('Bu kullanıcıyı sistemden silmek istediğinize emin misiniz?');">
+                                        <i class="fa-solid fa-trash me-1"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

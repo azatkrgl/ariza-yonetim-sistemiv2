@@ -34,13 +34,20 @@ public class ArizaKaydiController {
         return "login";
     }
 
+    // 3 ROLE GÖRE YÖNLENDİRME
     @PostMapping("/login-kontrol")
     public String loginKontrol(@RequestParam String sicilNo, @RequestParam String sifre, HttpSession session, Model model) {
         Kullanici aktifKullanici = kullaniciRepository.findBySicilNoAndSifre(sicilNo, sifre);
         if (aktifKullanici != null) {
             session.setAttribute("aktifKullanici", aktifKullanici);
-            if ("ADMIN".equals(aktifKullanici.getRol())) return "redirect:/admin";
-            else return "redirect:/calisan";
+            
+            if ("SUPER_ADMIN".equals(aktifKullanici.getRol())) {
+                return "redirect:/super-admin"; 
+            } else if ("ADMIN".equals(aktifKullanici.getRol())) {
+                return "redirect:/admin";
+            } else {
+                return "redirect:/calisan";
+            }
         } else {
             model.addAttribute("hata", "Sicil No veya Şifre Hatalı!"); 
             return "login";
@@ -53,6 +60,7 @@ public class ArizaKaydiController {
         return "redirect:/login";
     }
 
+    // --- 1. ÇALIŞAN MODU ---
     @GetMapping("/calisan")
     public String calisanEkrani(Model model, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
@@ -82,6 +90,7 @@ public class ArizaKaydiController {
         return "redirect:/calisan?basarili"; 
     }
 
+    // --- 2. YÖNETİCİ / TEKNİK MODU (ADMIN) ---
     @GetMapping("/admin")
     public String adminEkrani(Model model, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
@@ -143,5 +152,36 @@ public class ArizaKaydiController {
             arizaRepository.save(mevcutKayit);
         }
         return "redirect:/admin";
+    }
+
+    // --- 3. SÜPER ADMIN MODU ---
+    @GetMapping("/super-admin")
+    public String superAdminEkrani(Model model, HttpSession session) {
+        Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
+        if (kullanici == null || !"SUPER_ADMIN".equals(kullanici.getRol())) return "redirect:/login";
+        
+        model.addAttribute("kullanicilar", kullaniciRepository.findAll());
+        return "super-admin";
+    }
+
+    @PostMapping("/super-admin/kullanici/kaydet")
+    public String kullaniciKaydet(Kullanici yeniKullanici, HttpSession session) {
+        Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
+        if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
+        
+        kullaniciRepository.save(yeniKullanici);
+        return "redirect:/super-admin";
+    }
+
+    @GetMapping("/super-admin/kullanici/sil/{id}")
+    public String kullaniciSil(@PathVariable Long id, HttpSession session) {
+        Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
+        if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
+        
+        // Kendini silmesini engelle
+        if (aktifKullanici.getId().equals(id)) return "redirect:/super-admin";
+
+        kullaniciRepository.deleteById(id);
+        return "redirect:/super-admin";
     }
 }
