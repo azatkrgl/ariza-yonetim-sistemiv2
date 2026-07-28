@@ -36,8 +36,8 @@
         .table tbody tr:hover { background-color: rgba(255,255,255,0.4); }
         .badge-custom { padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 0.75rem;}
         
-        .form-control, .form-select { background-color: rgba(255,255,255,0.5) !important; border: 1px solid rgba(255,255,255,0.8) !important; color: #334155 !important; }
-        .form-control:focus, .form-select:focus { background-color: rgba(255,255,255,0.9) !important; border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
+        .form-control, .form-select { background-color: rgba(255,255,255,0.7) !important; border: 1px solid rgba(255,255,255,0.9) !important; color: #334155 !important; }
+        .form-control:focus, .form-select:focus { background-color: rgba(255,255,255,0.95) !important; border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
         
         .btn-modern { border-radius: 10px; font-weight: 600; padding: 10px 20px; transition: all 0.3s; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .btn-primary { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; }
@@ -46,6 +46,10 @@
         .btn-danger-light:hover { background-color: #ef4444; color: white; }
         .btn-warning-light { background-color: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); box-shadow: none;}
         .btn-warning-light:hover { background-color: #f59e0b; color: white; }
+
+        /* ÖZEL ÖN PLAN POPUP (LAYER SORUNUNU TAMAMEN ÇÖZER) */
+        .custom-popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px); z-index: 99999; align-items: center; justify-content: center; }
+        .custom-popup-box { background: #ffffff; border-radius: 20px; padding: 30px; width: 100%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.8); }
     </style>
 </head>
 <body>
@@ -183,7 +187,7 @@
                                             </td>
                                             <td class="text-end">
                                                 <!-- Düzenle Butonu -->
-                                                <button type="button" class="btn btn-warning-light btn-sm btn-modern me-1" data-bs-toggle="modal" th:data-bs-target="'#editModal' + ${kul.id}" title="Sicil/Şifre Düzenle">
+                                                <button type="button" class="btn btn-warning-light btn-sm btn-modern me-1" th:onclick="'openPopup(\'popup-' + ${kul.id} + '\')'" title="Sicil/Şifre Düzenle">
                                                     <i class="fa-solid fa-pen"></i>
                                                 </button>
                                                 <!-- Sil Butonu -->
@@ -191,46 +195,42 @@
                                                     <i class="fa-solid fa-trash"></i>
                                                 </a>
 
-                                                <!-- GÜVENLİ DÜZENLEME MODALI -->
-                                                <div class="modal fade text-start" th:id="'editModal' + ${kul.id}" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content glass-panel p-3 border shadow-lg" style="background: rgba(240, 244, 248, 0.95); backdrop-filter: blur(20px);">
-                                                            <div class="modal-header border-0">
-                                                                <h5 class="modal-title fw-bold text-dark"><i class="fa-solid fa-user-pen text-primary me-2"></i>Kullanıcı Düzenle</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-                                                            </div>
-                                                            <form th:action="@{/super-admin/kullanici/guncelle/{id}(id=${kul.id})}" method="post">
-                                                                <div class="modal-body">
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label text-muted small fw-bold">SİCİL NO</label>
-                                                                        <input type="text" name="sicilNo" class="form-control" th:value="${kul.sicilNo}" required>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label text-muted small fw-bold">AD SOYAD</label>
-                                                                        <input type="text" name="adSoyad" class="form-control" th:value="${kul.adSoyad}" required>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label text-muted small fw-bold">YENİ ŞİFRE</label>
-                                                                        <input type="text" name="sifre" class="form-control" th:value="${kul.sifre}" required>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
-                                                                        <select name="rol" class="form-select" required>
-                                                                            <option value="CALISAN" th:selected="${kul.rol == 'CALISAN'}">ÇALIŞAN (Saha Personeli)</option>
-                                                                            <option value="ADMIN" th:selected="${kul.rol == 'ADMIN'}">YÖNETİCİ (Teknik Servis)</option>
-                                                                            <option value="SUPER_ADMIN" th:selected="${kul.rol == 'SUPER_ADMIN'}">SÜPER ADMİN (Tam Yetki)</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer border-0">
-                                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">İptal</button>
-                                                                    <button type="submit" class="btn btn-primary btn-sm btn-modern">Değişiklikleri Kaydet</button>
-                                                                </div>
-                                                            </form>
+                                                <!-- ÖZEL ÖN PLAN POPUP PENCERESİ -->
+                                                <div class="custom-popup-overlay" th:id="'popup-' + ${kul.id}">
+                                                    <div class="custom-popup-box text-start">
+                                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                                            <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-user-pen text-primary me-2"></i>Kullanıcı Düzenle</h5>
+                                                            <button type="button" class="btn-close" th:onclick="'closePopup(\'popup-' + ${kul.id} + '\')'"></button>
                                                         </div>
+                                                        <form th:action="@{/super-admin/kullanici/guncelle/{id}(id=${kul.id})}" method="post">
+                                                            <div class="mb-3">
+                                                                <label class="form-label text-muted small fw-bold">SİCİL NO</label>
+                                                                <input type="text" name="sicilNo" class="form-control" th:value="${kul.sicilNo}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label text-muted small fw-bold">AD SOYAD</label>
+                                                                <input type="text" name="adSoyad" class="form-control" th:value="${kul.adSoyad}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label text-muted small fw-bold">YENİ ŞİFRE</label>
+                                                                <input type="text" name="sifre" class="form-control" th:value="${kul.sifre}" required>
+                                                            </div>
+                                                            <div class="mb-4">
+                                                                <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
+                                                                <select name="rol" class="form-select" required>
+                                                                    <option value="CALISAN" th:selected="${kul.rol == 'CALISAN'}">ÇALIŞAN (Saha Personeli)</option>
+                                                                    <option value="ADMIN" th:selected="${kul.rol == 'ADMIN'}">YÖNETİCİ (Teknik Servis)</option>
+                                                                    <option value="SUPER_ADMIN" th:selected="${kul.rol == 'SUPER_ADMIN'}">SÜPER ADMİN (Tam Yetki)</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="d-flex justify-content-end gap-2">
+                                                                <button type="button" class="btn btn-secondary btn-sm px-3" th:onclick="'closePopup(\'popup-' + ${kul.id} + '\')'">İptal</button>
+                                                                <button type="submit" class="btn btn-primary btn-sm btn-modern">Değişiklikleri Kaydet</button>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
-                                                <!-- Modal Sonu -->
+                                                <!-- Popup Sonu -->
 
                                             </td>
                                         </tr>
@@ -293,19 +293,15 @@
         </div>
     </div>
 
-    <!-- Bootstrap Script ve Modal Temizlik Betiği -->
+    <!-- Bootstrap Script ve Özel Popup Kontrol Fonksiyonları -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Modal kapandığında arka planda kalan donmaları ve siyah katmanları otomatik temizler
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            modal.addEventListener('hidden.bs.modal', function () {
-                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
-            });
-        });
+        function openPopup(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closePopup(id) {
+            document.getElementById(id).style.display = 'none';
+        }
     </script>
 </body>
 </html>
