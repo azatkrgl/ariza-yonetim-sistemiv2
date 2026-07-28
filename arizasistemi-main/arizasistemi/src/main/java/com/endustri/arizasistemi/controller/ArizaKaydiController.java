@@ -84,7 +84,7 @@ public class ArizaKaydiController {
                           + "Sorunlu Hat: " + arizaKaydi.getUretimHatti() + "\n"
                           + "Detaylı Açıklama: " + arizaKaydi.getArizaAciklamasi() + "\n"
                           + "Öncelik Puanı: " + arizaKaydi.getOncelikPuani() + "/100\n";
-            emailService.acilDurumMailiGonder("yonetici.mailin@gmail.com", konu, icerik);
+            emailService.acilDurumMailiGonder("azatkrgl88@gmail.com", konu, icerik);
         }
         return "redirect:/calisan?basarili"; 
     }
