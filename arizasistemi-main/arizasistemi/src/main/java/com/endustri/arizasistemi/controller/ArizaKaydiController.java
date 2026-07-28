@@ -102,7 +102,6 @@ public class ArizaKaydiController {
     @GetMapping("/cozuldu/{id}")
     public String cozulduIsaretle(@PathVariable Long id, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
-        // Hem Admin hem Süper Admin çözüldü yapabilsin
         if (kullanici == null || (!"ADMIN".equals(kullanici.getRol()) && !"SUPER_ADMIN".equals(kullanici.getRol()))) return "redirect:/login";
         
         ArizaKaydi kayit = arizaRepository.findById(id).orElse(null);
@@ -117,12 +116,38 @@ public class ArizaKaydiController {
         return "redirect:/admin";
     }
 
+    // DİNAMİK ANALİZ EKRANI (Admin ve Super Admin erişebilir, veritabanından gerçek verileri çeker)
     @GetMapping("/analiz")
     public String analizEkrani(Model model, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
-        if (kullanici == null || !"ADMIN".equals(kullanici.getRol())) return "redirect:/login";
+        if (kullanici == null || (!"ADMIN".equals(kullanici.getRol()) && !"SUPER_ADMIN".equals(kullanici.getRol()))) return "redirect:/login";
+        
         List<ArizaKaydi> cozulmusKayitlar = arizaRepository.findByArizaDurumu("Çözüldü"); 
+        List<ArizaKaydi> tumArizalar = arizaRepository.findAll(); 
+
+        // Üretim hatlarına göre gerçek arıza sayıları
+        long keceSayisi = tumArizalar.stream().filter(a -> "Keçe".equals(a.getUretimHatti())).count();
+        long fitilSayisi = tumArizalar.stream().filter(a -> "Fitil".equals(a.getUretimHatti())).count();
+        long kirmaSayisi = tumArizalar.stream().filter(a -> "Kırma".equals(a.getUretimHatti())).count();
+        long wrSayisi = tumArizalar.stream().filter(a -> "WR".equals(a.getUretimHatti())).count();
+
+        // Arıza türlerine göre gerçek arıza sayıları
+        long mSayisi = tumArizalar.stream().filter(a -> "Mekanik".equals(a.getArizaTuru())).count();
+        long elektrikSayisi = tumArizalar.stream().filter(a -> "Elektrik".equals(a.getArizaTuru())).count();
+        long otomasyonSayisi = tumArizalar.stream().filter(a -> "Otomasyon".equals(a.getArizaTuru())).count();
+        long digerSayisi = tumArizalar.stream().filter(a -> "Diğer".equals(a.getArizaTuru())).count();
+
         model.addAttribute("gecmisKayitlar", cozulmusKayitlar);
+        model.addAttribute("keceSayisi", keceSayisi);
+        model.addAttribute("fitilSayisi", fitilSayisi);
+        model.addAttribute("kirmaSayisi", kirmaSayisi);
+        model.addAttribute("wrSayisi", wrSayisi);
+        
+        model.addAttribute("mSayisi", mSayisi);
+        model.addAttribute("elektrikSayisi", elektrikSayisi);
+        model.addAttribute("otomasyonSayisi", otomasyonSayisi);
+        model.addAttribute("digerSayisi", digerSayisi);
+
         return "analiz";
     }
 
@@ -172,7 +197,6 @@ public class ArizaKaydiController {
         List<ArizaKaydi> tumArizalar = arizaRepository.findAll();
         List<Kullanici> tumKullanicilar = kullaniciRepository.findAll();
         
-        // İstatistikleri hesapla
         long aktifSayisi = tumArizalar.stream().filter(a -> "Aktif".equals(a.getArizaDurumu())).count();
         long cozulmusSayisi = tumArizalar.stream().filter(a -> "Çözüldü".equals(a.getArizaDurumu())).count();
 
@@ -200,13 +224,12 @@ public class ArizaKaydiController {
         Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
         if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
         
-        if (aktifKullanici.getId().equals(id)) return "redirect:/super-admin"; // Kendini silemez
+        if (aktifKullanici.getId().equals(id)) return "redirect:/super-admin"; 
 
         kullaniciRepository.deleteById(id);
         return "redirect:/super-admin";
     }
 
-    // YENİ: Süper Adminin arızayı kökten silme yetkisi
     @GetMapping("/super-admin/ariza/sil/{id}")
     public String arizaSil(@PathVariable Long id, HttpSession session) {
         Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");

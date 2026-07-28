@@ -8,33 +8,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Poppins', sans-serif; background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); height: 100vh; display: flex; align-items: center; justify-content: center; color: #334155; }
-        
         .glass-panel { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 20px; box-shadow: 0 15px 35px rgba(31, 38, 135, 0.1); padding: 40px; width: 100%; max-width: 400px; }
-        
         .login-header { text-align: center; margin-bottom: 30px; }
         .login-header i { font-size: 3rem; color: #0284c7; margin-bottom: 15px; }
-        
         .form-control { background-color: rgba(255,255,255,0.6) !important; border: 1px solid rgba(255,255,255,0.9) !important; color: #334155 !important; padding: 12px 15px; border-radius: 10px; }
         .form-control:focus { background-color: rgba(255,255,255,0.9) !important; border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
         .input-group-text { background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.9); color: #64748b; }
-        
-        .btn-login { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; font-weight: 600; padding: 12px; border-radius: 10px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); }
+        .btn-login { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; font-weight: 600; padding: 12px; border-radius: 10px; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); color: white; }
         .btn-login:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
-
     <div class="glass-panel">
         <div class="login-header">
             <i class="fa-solid fa-bolt text-warning"></i>
             <h4 class="fw-bold text-dark">Fabrika <span class="text-secondary">OS</span></h4>
             <p class="text-muted small fw-medium">Sisteme giriş yapmak için bilgilerinizi girin</p>
         </div>
-
         <div th:if="${hata}" class="alert alert-danger text-center fw-bold border-0 text-white py-2 shadow-sm" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border-radius: 10px;">
             <i class="fa-solid fa-triangle-exclamation me-1"></i> <span th:text="${hata}"></span>
         </div>
-
         <form action="/login-kontrol" method="post">
             <div class="mb-3">
                 <label class="form-label text-muted small fw-bold">SİCİL NO</label>
@@ -53,6 +46,5 @@
             <button type="submit" class="btn btn-primary w-100 btn-login">Sisteme Giriş Yap</button>
         </form>
     </div>
-
 </body>
 </html>
