@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>Süper Admin Paneli | Terminal</title>
@@ -7,38 +7,42 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; color: #334155; margin: 0; overflow-x: hidden;}
+        body { font-family: 'Poppins', sans-serif; background-color: #0b1121; color: #e2e8f0; margin: 0; overflow-x: hidden;}
         
         /* Sol Menü (Sidebar) */
-        .sidebar { height: 100vh; width: 260px; position: fixed; top: 0; left: 0; background: #0f172a; color: white; padding-top: 20px; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 100;}
+        .sidebar { height: 100vh; width: 260px; position: fixed; top: 0; left: 0; background: #0f172a; border-right: 1px solid #1e293b; padding-top: 20px; box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 100;}
         .sidebar-brand { font-size: 1.2rem; font-weight: 700; text-align: center; margin-bottom: 40px; color: #38bdf8; letter-spacing: 1px;}
-        .nav-pills .nav-link { color: #cbd5e1; margin: 5px 15px; border-radius: 10px; padding: 12px 20px; font-weight: 500; transition: all 0.3s;}
-        .nav-pills .nav-link:hover { background-color: #1e293b; color: white; transform: translateX(5px);}
+        .nav-pills .nav-link { color: #94a3b8; margin: 5px 15px; border-radius: 10px; padding: 12px 20px; font-weight: 500; transition: all 0.3s;}
+        .nav-pills .nav-link:hover { background-color: #1e293b; color: #f8fafc; transform: translateX(5px);}
         .nav-pills .nav-link.active { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);}
         
         /* İçerik Alanı */
         .main-content { margin-left: 260px; padding: 30px; min-height: 100vh; }
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 15px 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #1e293b; padding: 15px 30px; border-radius: 15px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
         
         /* İstatistik Kartları */
-        .stat-card { border-radius: 15px; padding: 25px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.08); transition: transform 0.3s;}
+        .stat-card { border-radius: 15px; padding: 25px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: transform 0.3s; border: 1px solid rgba(255,255,255,0.05);}
         .stat-card:hover { transform: translateY(-5px); }
-        .stat-card i { position: absolute; right: -10px; bottom: -10px; font-size: 100px; opacity: 0.2; }
-        .bg-gradient-1 { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
-        .bg-gradient-2 { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .bg-gradient-3 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .bg-gradient-4 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .stat-card i { position: absolute; right: -10px; bottom: -10px; font-size: 100px; opacity: 0.15; }
+        .bg-gradient-1 { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
+        .bg-gradient-3 { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .bg-gradient-4 { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); }
         
         /* Tablolar ve Formlar */
-        .card-box { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); margin-bottom: 30px;}
-        .table thead { background-color: #f8fafc; color: #64748b; font-size: 0.85rem; text-transform: uppercase;}
-        .table tbody tr { transition: all 0.2s; }
-        .table tbody tr:hover { background-color: #f1f5f9; }
+        .card-box { background: #1e293b; border-radius: 15px; padding: 25px; border: 1px solid #334155; box-shadow: 0 5px 20px rgba(0,0,0,0.2); margin-bottom: 30px;}
+        .table thead { background-color: #0f172a; color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;}
+        .table tbody tr { transition: all 0.2s; border-bottom: 1px solid #334155; }
+        .table tbody tr:hover { background-color: #0f172a; }
         .badge-custom { padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 0.75rem;}
+        
+        /* Dark Mode Form Elementleri */
+        .form-control, .form-select { background-color: #0f172a !important; border: 1px solid #334155 !important; color: #f8fafc !important; }
+        .form-control:focus, .form-select:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important; }
         
         /* Butonlar */
         .btn-modern { border-radius: 10px; font-weight: 600; padding: 10px 20px; transition: all 0.3s; }
-        .btn-danger-light { background-color: #fee2e2; color: #ef4444; border: none; }
+        .btn-danger-light { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
         .btn-danger-light:hover { background-color: #ef4444; color: white; }
     </style>
 </head>
@@ -67,11 +71,11 @@
         
         <!-- Üst Bilgi Çubuğu -->
         <div class="top-header">
-            <h4 class="mb-0 fw-bold text-dark">Süper Yönetici Paneli</h4>
+            <h4 class="mb-0 fw-bold text-white">Süper Yönetici Paneli</h4>
             <div class="d-flex align-items-center">
                 <div class="me-4 text-end">
-                    <div class="fw-bold text-dark" th:text="${session.aktifKullanici.adSoyad}"></div>
-                    <div class="text-muted small">Yetki: SÜPER ADMİN</div>
+                    <div class="fw-bold text-white" th:text="${session.aktifKullanici.adSoyad}"></div>
+                    <div class="text-info small">Yetki: SÜPER ADMİN</div>
                 </div>
                 <a href="/logout" class="btn btn-danger btn-modern"><i class="fa-solid fa-power-off me-1"></i> Çıkış</a>
             </div>
@@ -114,9 +118,9 @@
                 </div>
                 
                 <div class="card-box text-center py-5">
-                    <img src="https://cdn-icons-png.flaticon.com/512/6122/6122861.png" width="150" class="mb-4 opacity-50" alt="Server">
-                    <h4 class="fw-bold">Sistem Sorunsuz Çalışıyor</h4>
-                    <p class="text-muted">Tüm arıza ve kullanıcı logları bulut sunucuya senkronize edilmiştir. <br> Sol menüden modülleri yönetebilirsiniz.</p>
+                    <img src="https://cdn-icons-png.flaticon.com/512/6122/6122861.png" width="150" class="mb-4 opacity-50" alt="Server" style="filter: brightness(0) invert(1);">
+                    <h4 class="fw-bold text-white">Sistem Sorunsuz Çalışıyor</h4>
+                    <p class="text-secondary">Tüm arıza ve kullanıcı logları bulut sunucuya senkronize edilmiştir. <br> Sol menüden modülleri yönetebilirsiniz.</p>
                 </div>
             </div>
 
@@ -125,23 +129,23 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card-box">
-                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-user-plus text-primary me-2"></i>Personel Ekle</h5>
+                            <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-user-plus text-info me-2"></i>Personel Ekle</h5>
                             <form action="/super-admin/kullanici/kaydet" method="post">
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">SİCİL NO</label>
-                                    <input type="text" name="sicilNo" class="form-control form-control-lg bg-light border-0" required>
+                                    <label class="form-label text-secondary small fw-bold">SİCİL NO</label>
+                                    <input type="text" name="sicilNo" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">AD SOYAD</label>
-                                    <input type="text" name="adSoyad" class="form-control form-control-lg bg-light border-0" required>
+                                    <label class="form-label text-secondary small fw-bold">AD SOYAD</label>
+                                    <input type="text" name="adSoyad" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">ŞİFRE</label>
-                                    <input type="text" name="sifre" class="form-control form-control-lg bg-light border-0" required>
+                                    <label class="form-label text-secondary small fw-bold">ŞİFRE</label>
+                                    <input type="text" name="sifre" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
-                                    <select name="rol" class="form-select form-select-lg bg-light border-0" required>
+                                    <label class="form-label text-secondary small fw-bold">YETKİ / ROL</label>
+                                    <select name="rol" class="form-select form-select-lg" required>
                                         <option value="CALISAN">ÇALIŞAN (Saha Personeli)</option>
                                         <option value="ADMIN">YÖNETİCİ (Teknik Servis)</option>
                                         <option value="SUPER_ADMIN">SÜPER ADMİN (Tam Yetki)</option>
@@ -153,9 +157,9 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card-box">
-                            <h5 class="fw-bold mb-4"><i class="fa-solid fa-address-book text-primary me-2"></i>Sistemdeki Personeller</h5>
+                            <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-address-book text-info me-2"></i>Sistemdeki Personeller</h5>
                             <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                                <table class="table table-borderless align-middle">
+                                <table class="table table-borderless align-middle text-light">
                                     <thead class="sticky-top">
                                         <tr>
                                             <th>Sicil No</th>
@@ -166,10 +170,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr th:each="kul : ${kullanicilar}" class="border-bottom">
-                                            <td class="fw-bold text-dark" th:text="${kul.sicilNo}"></td>
+                                        <tr th:each="kul : ${kullanicilar}">
+                                            <td class="fw-bold text-info" th:text="${kul.sicilNo}"></td>
                                             <td th:text="${kul.adSoyad}"></td>
-                                            <td class="text-muted" th:text="${kul.sifre}"></td>
+                                            <td class="text-secondary" th:text="${kul.sifre}"></td>
                                             <td>
                                                 <span th:if="${kul.rol == 'SUPER_ADMIN'}" class="badge bg-danger badge-custom">SÜPER ADMİN</span>
                                                 <span th:if="${kul.rol == 'ADMIN'}" class="badge bg-primary badge-custom">YÖNETİCİ</span>
@@ -192,10 +196,10 @@
             <!-- 3. SEKME: TÜM ARIZA KAYITLARI -->
             <div class="tab-pane fade" id="v-pills-faults" role="tabpanel">
                 <div class="card-box">
-                    <h5 class="fw-bold mb-4"><i class="fa-solid fa-database text-primary me-2"></i>Tüm Arıza Veritabanı</h5>
+                    <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-database text-info me-2"></i>Tüm Arıza Veritabanı</h5>
                     <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
-                        <table class="table table-hover align-middle">
-                            <thead class="sticky-top bg-white shadow-sm">
+                        <table class="table table-hover align-middle text-light">
+                            <thead class="sticky-top">
                                 <tr>
                                     <th>Tarih</th>
                                     <th>Bildiren (Sicil)</th>
@@ -208,13 +212,13 @@
                             </thead>
                             <tbody>
                                 <tr th:each="kayit : ${tumArizalar}">
-                                    <td class="small text-muted" th:text="${kayit.arizaTarihiSaati}"></td>
+                                    <td class="small text-secondary" th:text="${kayit.arizaTarihiSaati}"></td>
                                     <td>
-                                        <div class="fw-bold text-dark" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
-                                        <div class="small text-muted" th:text="${kayit.bildirenKullanici.sicilNo}"></div>
+                                        <div class="fw-bold text-info" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
+                                        <div class="small text-secondary" th:text="${kayit.bildirenKullanici.sicilNo}"></div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border" th:text="${kayit.uretimHatti}"></span><br>
+                                        <span class="badge bg-dark text-light border border-secondary" th:text="${kayit.uretimHatti}"></span><br>
                                         <span class="small fw-medium" th:text="${kayit.arizaTuru}"></span>
                                     </td>
                                     <td class="small" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${kayit.arizaAciklamasi}"></td>
@@ -223,7 +227,7 @@
                                         <span th:if="${kayit.arizaDurumu == 'Çözüldü'}" class="badge bg-success badge-custom">Çözüldü</span>
                                     </td>
                                     <td>
-                                        <h5 class="mb-0 fw-bold" th:classappend="${kayit.oncelikPuani >= 80 ? 'text-danger' : 'text-primary'}" th:text="${kayit.oncelikPuani}"></h5>
+                                        <h5 class="mb-0 fw-bold" th:classappend="${kayit.oncelikPuani >= 80 ? 'text-danger' : 'text-info'}" th:text="${kayit.oncelikPuani}"></h5>
                                     </td>
                                     <td class="text-end">
                                         <a th:if="${kayit.arizaDurumu == 'Aktif'}" th:href="@{/cozuldu/{id}(id=${kayit.id})}" class="btn btn-success btn-sm btn-modern me-1" title="Çözüldü İşaretle"><i class="fa-solid fa-check"></i></a>

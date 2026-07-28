@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>Admin - Fabrika Arıza İzleme Paneli</title>
@@ -7,13 +7,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; color: #333; }
-        .navbar-custom { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-        .table-container { background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
-        .table thead { background-color: #f8fafc; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        body { font-family: 'Inter', sans-serif; background-color: #0b1121; color: #e2e8f0; }
+        .navbar-custom { background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border-bottom: 1px solid #1e293b; }
+        .table-container { background: #1e293b; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #334155; }
+        .table thead { background-color: #0f172a; color: #94a3b8; border-bottom: 2px solid #334155;}
+        .table-hover tbody tr { border-bottom: 1px solid #334155; }
+        .table-hover tbody tr:hover { background-color: #0f172a; }
         .badge-custom { padding: 6px 12px; border-radius: 30px; font-weight: 600; font-size: 0.8rem; }
-        .btn-delete { background-color: #dcfce7; color: #16a34a; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; }
-        .btn-delete:hover { background-color: #16a34a; color: #ffffff; }
+        .btn-delete { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; border-radius: 8px; transition: all 0.2s; }
+        .btn-delete:hover { background-color: #10b981; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -30,7 +32,7 @@
                 <span class="badge bg-secondary ms-1 fw-normal" style="font-size: 0.7rem;">Yönetici</span>
             </span>
 
-            <a href="/analiz" class="btn btn-primary fw-bold px-3 py-2 shadow-sm rounded-3 btn-sm" style="background-color: #6366f1; border: none;">
+            <a href="/analiz" class="btn btn-primary fw-bold px-3 py-2 shadow-sm rounded-3 btn-sm" style="background-color: #3b82f6; border: none;">
                 <i class="fa-solid fa-chart-pie me-1"></i> Analiz & Raporlar
             </a>
             <a href="/logout" class="btn btn-danger fw-bold px-3 py-2 shadow-sm rounded-3 btn-sm">
@@ -43,7 +45,7 @@
 <div class="container-fluid px-4">
     <div class="table-container p-4">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 text-light">
                 <thead>
                     <tr>
                         <th>Tarih/Saat</th>
@@ -58,24 +60,24 @@
                 </thead>
                 <tbody>
                     <tr th:each="kayit : ${kayitlar}">
-                        <td th:text="${kayit.arizaTarihiSaati}"></td>
+                        <td class="text-secondary small" th:text="${kayit.arizaTarihiSaati}"></td>
                         <td>
-                            <div class="fw-bold text-primary" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
-                            <span class="text-muted small"><i class="fa-solid fa-id-card me-1"></i>Sicil: <span th:text="${kayit.bildirenKullanici.sicilNo}"></span></span>
+                            <div class="fw-bold text-info" th:text="${kayit.bildirenKullanici.adSoyad}"></div>
+                            <span class="text-secondary small"><i class="fa-solid fa-id-card me-1"></i>Sicil: <span th:text="${kayit.bildirenKullanici.sicilNo}"></span></span>
                         </td>
                         <td>
-                            <span class="badge bg-light text-dark border fw-normal" th:text="${kayit.uretimHatti}"></span>
+                            <span class="badge bg-dark text-light border border-secondary fw-normal" th:text="${kayit.uretimHatti}"></span>
                         </td>
                         <td>
                             <span class="fw-medium" th:text="${kayit.arizaTuru}"></span>
-                            <div th:if="${kayit.arizaTuru == 'Diğer'}" class="text-primary small fw-bold" th:text="'Tür: ' + ${kayit.arizaTuruDiger}"></div>
+                            <div th:if="${kayit.arizaTuru == 'Diğer'}" class="text-info small fw-bold" th:text="'Tür: ' + ${kayit.arizaTuruDiger}"></div>
                         </td>
                         <td style="max-width: 250px;">
-                            <span class="small text-muted" th:text="${kayit.arizaAciklamasi}"></span>
+                            <span class="small" th:text="${kayit.arizaAciklamasi}"></span>
                         </td>
                         <td>
                             <span th:if="${kayit.isgRiskiVarMi}" class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">İSG</span>
-                            <span th:if="${kayit.durusVarMi}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill">Duruş</span>
+                            <span th:if="${kayit.durusVarMi}" class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">Duruş</span>
                         </td>
                         <td class="text-center">
                             <div class="fs-5 fw-bold" th:text="${kayit.oncelikPuani}"></div>
@@ -85,12 +87,10 @@
                             <span th:if="${kayit.oncelikPuani lt 30}" class="badge-custom bg-secondary text-white" th:text="${kayit.oncelikSeviyesi}"></span>
                         </td>
                         <td class="text-center">
-                            <a th:href="@{/duzenle/{id}(id=${kayit.id})}" class="btn btn-warning btn-sm px-2 py-2 me-1 text-white fw-bold" title="Düzenle">
+                            <a th:href="@{/duzenle/{id}(id=${kayit.id})}" class="btn btn-warning btn-sm px-2 py-2 me-1 text-dark fw-bold" title="Düzenle">
                                <i class="fa-solid fa-pen"></i>
                             </a>
-                            <a th:href="@{/cozuldu/{id}(id=${kayit.id})}" 
-                               class="btn btn-delete btn-sm px-3 py-2" 
-                               onclick="return confirm('Bu arızayı çözüldü olarak arşivlemek istediğinize emin misiniz?')">
+                            <a th:href="@{/cozuldu/{id}(id=${kayit.id})}" class="btn btn-delete btn-sm px-3 py-2" onclick="return confirm('Bu arızayı çözüldü olarak arşivlemek istediğinize emin misiniz?')">
                                <i class="fa-solid fa-check-double me-1"></i> Çözüldü
                             </a>
                         </td>
