@@ -75,16 +75,22 @@ public class ArizaKaydiController {
 
         arizaKaydi.setBildirenKullanici(aktifKullanici);
         arizaKaydi.hesaplaOncelik(); 
-        arizaRepository.save(arizaKaydi); 
+        arizaRepository.save(arizaKaydi); // Veritabanına kesin kaydeder
 
+        // Mail gönderimi hata verse bile sistemin çökmemesi için try-catch içine alındı
         if (arizaKaydi.getOncelikPuani() >= 80) {
-            String konu = "DİKKAT! ACİL ARIZA - " + arizaKaydi.getUretimHatti() + " Hattı";
-            String icerik = "Kritik bir arıza meydana gelmiştir.\n\n"
-                          + "Bildiren Personel: " + aktifKullanici.getAdSoyad() + " (Sicil: " + aktifKullanici.getSicilNo() + ")\n"
-                          + "Sorunlu Hat: " + arizaKaydi.getUretimHatti() + "\n"
-                          + "Detaylı Açıklama: " + arizaKaydi.getArizaAciklamasi() + "\n"
-                          + "Öncelik Puanı: " + arizaKaydi.getOncelikPuani() + "/100\n";
-            emailService.acilDurumMailiGonder("azatkrgl88@gmail.com", konu, icerik);
+            try {
+                String konu = "DİKKAT! ACİL ARIZA - " + arizaKaydi.getUretimHatti() + " Hattı";
+                String icerik = "Kritik bir arıza meydana gelmiştir.\n\n"
+                              + "Bildiren Personel: " + aktifKullanici.getAdSoyad() + " (Sicil: " + aktifKullanici.getSicilNo() + ")\n"
+                              + "Sorunlu Hat: " + arizaKaydi.getUretimHatti() + "\n"
+                              + "Detaylı Açıklama: " + arizaKaydi.getArizaAciklamasi() + "\n"
+                              + "Öncelik Puanı: " + arizaKaydi.getOncelikPuani() + "/100\n";
+                emailService.acilDurumMailiGonder("azatkrgl88@gmail.com", konu, icerik);
+            } catch (Exception e) {
+                // Mail gonderilemese bile kayit basariyla tamamlanir, uygulama cokmez
+                System.out.println("Mail gonderilemedi: " + e.getMessage());
+            }
         }
         return "redirect:/calisan?basarili"; 
     }
@@ -216,7 +222,6 @@ public class ArizaKaydiController {
         return "redirect:/super-admin";
     }
 
-    // YENİ: Kullanıcı Sicil No ve Şifre Güncelleme Metodu
     @PostMapping("/super-admin/kullanici/guncelle/{id}")
     public String kullaniciGuncelle(@PathVariable Long id, @RequestParam String sicilNo, @RequestParam String adSoyad, @RequestParam String sifre, @RequestParam String rol, HttpSession session) {
         Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
