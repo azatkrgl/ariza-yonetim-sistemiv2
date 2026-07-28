@@ -116,7 +116,6 @@ public class ArizaKaydiController {
         return "redirect:/admin";
     }
 
-    // DİNAMİK ANALİZ EKRANI (Admin ve Super Admin erişebilir, veritabanından gerçek verileri çeker)
     @GetMapping("/analiz")
     public String analizEkrani(Model model, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
@@ -125,13 +124,11 @@ public class ArizaKaydiController {
         List<ArizaKaydi> cozulmusKayitlar = arizaRepository.findByArizaDurumu("Çözüldü"); 
         List<ArizaKaydi> tumArizalar = arizaRepository.findAll(); 
 
-        // Üretim hatlarına göre gerçek arıza sayıları
         long keceSayisi = tumArizalar.stream().filter(a -> "Keçe".equals(a.getUretimHatti())).count();
         long fitilSayisi = tumArizalar.stream().filter(a -> "Fitil".equals(a.getUretimHatti())).count();
         long kirmaSayisi = tumArizalar.stream().filter(a -> "Kırma".equals(a.getUretimHatti())).count();
         long wrSayisi = tumArizalar.stream().filter(a -> "WR".equals(a.getUretimHatti())).count();
 
-        // Arıza türlerine göre gerçek arıza sayıları
         long mSayisi = tumArizalar.stream().filter(a -> "Mekanik".equals(a.getArizaTuru())).count();
         long elektrikSayisi = tumArizalar.stream().filter(a -> "Elektrik".equals(a.getArizaTuru())).count();
         long otomasyonSayisi = tumArizalar.stream().filter(a -> "Otomasyon".equals(a.getArizaTuru())).count();
@@ -216,6 +213,23 @@ public class ArizaKaydiController {
         if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
         
         kullaniciRepository.save(yeniKullanici);
+        return "redirect:/super-admin";
+    }
+
+    // YENİ: Kullanıcı Sicil No ve Şifre Güncelleme Metodu
+    @PostMapping("/super-admin/kullanici/guncelle/{id}")
+    public String kullaniciGuncelle(@PathVariable Long id, @RequestParam String sicilNo, @RequestParam String adSoyad, @RequestParam String sifre, @RequestParam String rol, HttpSession session) {
+        Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
+        if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
+
+        Kullanici kullanici = kullaniciRepository.findById(id).orElse(null);
+        if (kullanici != null) {
+            kullanici.setSicilNo(sicilNo);
+            kullanici.setAdSoyad(adSoyad);
+            kullanici.setSifre(sifre);
+            kullanici.setRol(rol);
+            kullaniciRepository.save(kullanici);
+        }
         return "redirect:/super-admin";
     }
 
