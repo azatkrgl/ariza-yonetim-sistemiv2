@@ -34,7 +34,6 @@ public class ArizaKaydiController {
         return "login";
     }
 
-    // 3 ROLE GÖRE YÖNLENDİRME
     @PostMapping("/login-kontrol")
     public String loginKontrol(@RequestParam String sicilNo, @RequestParam String sifre, HttpSession session, Model model) {
         Kullanici aktifKullanici = kullaniciRepository.findBySicilNoAndSifre(sicilNo, sifre);
@@ -103,11 +102,17 @@ public class ArizaKaydiController {
     @GetMapping("/cozuldu/{id}")
     public String cozulduIsaretle(@PathVariable Long id, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
-        if (kullanici == null || !"ADMIN".equals(kullanici.getRol())) return "redirect:/login";
+        // Hem Admin hem Süper Admin çözüldü yapabilsin
+        if (kullanici == null || (!"ADMIN".equals(kullanici.getRol()) && !"SUPER_ADMIN".equals(kullanici.getRol()))) return "redirect:/login";
+        
         ArizaKaydi kayit = arizaRepository.findById(id).orElse(null);
         if(kayit != null) {
             kayit.setArizaDurumu("Çözüldü");
             arizaRepository.save(kayit); 
+        }
+        
+        if("SUPER_ADMIN".equals(kullanici.getRol())) {
+            return "redirect:/super-admin";
         }
         return "redirect:/admin";
     }
@@ -124,7 +129,7 @@ public class ArizaKaydiController {
     @GetMapping("/duzenle/{id}")
     public String duzenleEkrani(@PathVariable Long id, Model model, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
-        if (kullanici == null || !"ADMIN".equals(kullanici.getRol())) return "redirect:/login";
+        if (kullanici == null || (!"ADMIN".equals(kullanici.getRol()) && !"SUPER_ADMIN".equals(kullanici.getRol()))) return "redirect:/login";
 
         ArizaKaydi kayit = arizaRepository.findById(id).orElse(null);
         if (kayit == null) return "redirect:/admin";
@@ -136,7 +141,7 @@ public class ArizaKaydiController {
     @PostMapping("/guncelle/{id}")
     public String arizaGuncelle(@PathVariable Long id, ArizaKaydi formVerisi, HttpSession session) {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
-        if (kullanici == null || !"ADMIN".equals(kullanici.getRol())) return "redirect:/login";
+        if (kullanici == null || (!"ADMIN".equals(kullanici.getRol()) && !"SUPER_ADMIN".equals(kullanici.getRol()))) return "redirect:/login";
 
         ArizaKaydi mevcutKayit = arizaRepository.findById(id).orElse(null);
         if (mevcutKayit != null) {
@@ -151,6 +156,10 @@ public class ArizaKaydiController {
             mevcutKayit.hesaplaOncelik();
             arizaRepository.save(mevcutKayit);
         }
+        
+        if("SUPER_ADMIN".equals(kullanici.getRol())) {
+            return "redirect:/super-admin";
+        }
         return "redirect:/admin";
     }
 
@@ -160,7 +169,20 @@ public class ArizaKaydiController {
         Kullanici kullanici = (Kullanici) session.getAttribute("aktifKullanici");
         if (kullanici == null || !"SUPER_ADMIN".equals(kullanici.getRol())) return "redirect:/login";
         
-        model.addAttribute("kullanicilar", kullaniciRepository.findAll());
+        List<ArizaKaydi> tumArizalar = arizaRepository.findAll();
+        List<Kullanici> tumKullanicilar = kullaniciRepository.findAll();
+        
+        // İstatistikleri hesapla
+        long aktifSayisi = tumArizalar.stream().filter(a -> "Aktif".equals(a.getArizaDurumu())).count();
+        long cozulmusSayisi = tumArizalar.stream().filter(a -> "Çözüldü".equals(a.getArizaDurumu())).count();
+
+        model.addAttribute("kullanicilar", tumKullanicilar);
+        model.addAttribute("tumArizalar", tumArizalar);
+        model.addAttribute("toplamKullanici", tumKullanicilar.size());
+        model.addAttribute("toplamAriza", tumArizalar.size());
+        model.addAttribute("aktifAriza", aktifSayisi);
+        model.addAttribute("cozulmusAriza", cozulmusSayisi);
+        
         return "super-admin";
     }
 
@@ -178,10 +200,19 @@ public class ArizaKaydiController {
         Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
         if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
         
-        // Kendini silmesini engelle
-        if (aktifKullanici.getId().equals(id)) return "redirect:/super-admin";
+        if (aktifKullanici.getId().equals(id)) return "redirect:/super-admin"; // Kendini silemez
 
         kullaniciRepository.deleteById(id);
+        return "redirect:/super-admin";
+    }
+
+    // YENİ: Süper Adminin arızayı kökten silme yetkisi
+    @GetMapping("/super-admin/ariza/sil/{id}")
+    public String arizaSil(@PathVariable Long id, HttpSession session) {
+        Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
+        if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
+        
+        arizaRepository.deleteById(id);
         return "redirect:/super-admin";
     }
 }
