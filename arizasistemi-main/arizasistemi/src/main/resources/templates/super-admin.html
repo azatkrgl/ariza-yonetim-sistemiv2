@@ -47,7 +47,7 @@
         .btn-warning-light { background-color: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); box-shadow: none;}
         .btn-warning-light:hover { background-color: #f59e0b; color: white; }
 
-        /* ÖZEL ÖN PLAN POPUP (LAYER SORUNUNU TAMAMEN ÇÖZER) */
+        /* ÖZEL ÖN PLAN POPUP */
         .custom-popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px); z-index: 99999; align-items: center; justify-content: center; }
         .custom-popup-box { background: #ffffff; border-radius: 20px; padding: 30px; width: 100%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.8); }
     </style>
@@ -133,37 +133,16 @@
             <!-- 2. SEKME: KULLANICI YÖNETİMİ -->
             <div class="tab-pane fade" id="v-pills-users" role="tabpanel">
                 <div class="row">
-                    <div class="col-md-4">
+                    <!-- Tabloyu ekranı tam kaplayacak şekilde genişlettik -->
+                    <div class="col-md-12">
                         <div class="card-box glass-panel">
-                            <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-user-plus text-primary me-2"></i>Personel Ekle</h5>
-                            <form action="/super-admin/kullanici/kaydet" method="post">
-                                <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">SİCİL NO</label>
-                                    <input type="text" name="sicilNo" class="form-control form-control-lg" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">AD SOYAD</label>
-                                    <input type="text" name="adSoyad" class="form-control form-control-lg" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">ŞİFRE</label>
-                                    <input type="text" name="sifre" class="form-control form-control-lg" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
-                                    <select name="rol" class="form-select form-select-lg" required>
-                                        <option value="CALISAN">ÇALIŞAN (Saha Personeli)</option>
-                                        <option value="ADMIN">YÖNETİCİ (Teknik Servis)</option>
-                                        <option value="SUPER_ADMIN">SÜPER ADMİN (Tam Yetki)</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 btn-modern py-3">Sisteme Kaydet</button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-box glass-panel">
-                            <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-address-book text-primary me-2"></i>Sistemdeki Personeller</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book text-primary me-2"></i>Sistemdeki Personeller</h5>
+                                <button type="button" class="btn btn-primary btn-modern" onclick="openPopup('addPopup')">
+                                    <i class="fa-solid fa-user-plus me-2"></i>Kullanıcı Ekle
+                                </button>
+                            </div>
+                            
                             <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                                 <table class="table align-middle">
                                     <thead class="sticky-top" style="background: rgba(245, 247, 250, 0.9);">
@@ -179,7 +158,8 @@
                                         <tr th:each="kul : ${kullanicilar}">
                                             <td class="fw-bold text-primary" th:text="${kul.sicilNo}"></td>
                                             <td class="fw-medium text-dark" th:text="${kul.adSoyad}"></td>
-                                            <td class="text-muted" th:text="${kul.sifre}"></td>
+                                            <!-- GÜVENLİK: Şifreler maskelendi -->
+                                            <td class="text-muted fw-bold">*****</td>
                                             <td>
                                                 <span th:if="${kul.rol == 'SUPER_ADMIN'}" class="badge bg-danger badge-custom">SÜPER ADMİN</span>
                                                 <span th:if="${kul.rol == 'ADMIN'}" class="badge bg-primary badge-custom">YÖNETİCİ</span>
@@ -195,7 +175,7 @@
                                                     <i class="fa-solid fa-trash"></i>
                                                 </a>
 
-                                                <!-- ÖZEL ÖN PLAN POPUP PENCERESİ -->
+                                                <!-- KULLANICI DÜZENLEME POPUP PENCERESİ -->
                                                 <div class="custom-popup-overlay" th:id="'popup-' + ${kul.id}">
                                                     <div class="custom-popup-box text-start">
                                                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -211,9 +191,10 @@
                                                                 <label class="form-label text-muted small fw-bold">AD SOYAD</label>
                                                                 <input type="text" name="adSoyad" class="form-control" th:value="${kul.adSoyad}" required>
                                                             </div>
+                                                            <!-- GÜVENLİK: Şifre varsayılan olarak boş gelir, değişmeyecekse boş bırakılır -->
                                                             <div class="mb-3">
                                                                 <label class="form-label text-muted small fw-bold">YENİ ŞİFRE</label>
-                                                                <input type="text" name="sifre" class="form-control" th:value="${kul.sifre}" required>
+                                                                <input type="text" name="sifre" class="form-control" placeholder="Değiştirmek istemiyorsanız boş bırakın">
                                                             </div>
                                                             <div class="mb-4">
                                                                 <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
@@ -239,6 +220,42 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- YENİ PERSONEL EKLE POPUP PENCERESİ -->
+            <div class="custom-popup-overlay" id="addPopup">
+                <div class="custom-popup-box text-start">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-user-plus text-primary me-2"></i>Yeni Personel Ekle</h5>
+                        <button type="button" class="btn-close" onclick="closePopup('addPopup')"></button>
+                    </div>
+                    <form action="/super-admin/kullanici/kaydet" method="post">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">SİCİL NO</label>
+                            <input type="text" name="sicilNo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">AD SOYAD</label>
+                            <input type="text" name="adSoyad" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">ŞİFRE</label>
+                            <input type="text" name="sifre" class="form-control" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold">YETKİ / ROL</label>
+                            <select name="rol" class="form-select" required>
+                                <option value="CALISAN">ÇALIŞAN (Saha Personeli)</option>
+                                <option value="ADMIN">YÖNETİCİ (Teknik Servis)</option>
+                                <option value="SUPER_ADMIN">SÜPER ADMİN (Tam Yetki)</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary btn-sm px-3" onclick="closePopup('addPopup')">İptal</button>
+                            <button type="submit" class="btn btn-primary btn-sm btn-modern">Sisteme Kaydet</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

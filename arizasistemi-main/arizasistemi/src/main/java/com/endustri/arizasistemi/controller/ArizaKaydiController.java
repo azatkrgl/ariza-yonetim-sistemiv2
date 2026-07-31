@@ -75,9 +75,8 @@ public class ArizaKaydiController {
 
         arizaKaydi.setBildirenKullanici(aktifKullanici);
         arizaKaydi.hesaplaOncelik(); 
-        arizaRepository.save(arizaKaydi); // Veritabanına kesin kaydeder
+        arizaRepository.save(arizaKaydi); 
 
-        // Mail gönderimi hata verse bile sistemin çökmemesi için try-catch içine alındı
         if (arizaKaydi.getOncelikPuani() >= 80) {
             try {
                 String konu = "DİKKAT! ACİL ARIZA - " + arizaKaydi.getUretimHatti() + " Hattı";
@@ -86,9 +85,8 @@ public class ArizaKaydiController {
                               + "Sorunlu Hat: " + arizaKaydi.getUretimHatti() + "\n"
                               + "Detaylı Açıklama: " + arizaKaydi.getArizaAciklamasi() + "\n"
                               + "Öncelik Puanı: " + arizaKaydi.getOncelikPuani() + "/100\n";
-                emailService.acilDurumMailiGonder("azatkrgl88@gmail.com", konu, icerik);
+                emailService.acilDurumMailiGonder("yonetici.mailin@gmail.com", konu, icerik);
             } catch (Exception e) {
-                // Mail gonderilemese bile kayit basariyla tamamlanir, uygulama cokmez
                 System.out.println("Mail gonderilemedi: " + e.getMessage());
             }
         }
@@ -222,8 +220,9 @@ public class ArizaKaydiController {
         return "redirect:/super-admin";
     }
 
+    // GÜVENLİK GÜNCELLEMESİ: Şifre boş gelirse eski şifreyi korur
     @PostMapping("/super-admin/kullanici/guncelle/{id}")
-    public String kullaniciGuncelle(@PathVariable Long id, @RequestParam String sicilNo, @RequestParam String adSoyad, @RequestParam String sifre, @RequestParam String rol, HttpSession session) {
+    public String kullaniciGuncelle(@PathVariable Long id, @RequestParam String sicilNo, @RequestParam String adSoyad, @RequestParam(required = false) String sifre, @RequestParam String rol, HttpSession session) {
         Kullanici aktifKullanici = (Kullanici) session.getAttribute("aktifKullanici");
         if (aktifKullanici == null || !"SUPER_ADMIN".equals(aktifKullanici.getRol())) return "redirect:/login";
 
@@ -231,8 +230,13 @@ public class ArizaKaydiController {
         if (kullanici != null) {
             kullanici.setSicilNo(sicilNo);
             kullanici.setAdSoyad(adSoyad);
-            kullanici.setSifre(sifre);
             kullanici.setRol(rol);
+            
+            // Eğer formdan yeni bir şifre gönderilmişse ve boş değilse güncelle
+            if (sifre != null && !sifre.trim().isEmpty()) {
+                kullanici.setSifre(sifre);
+            }
+            
             kullaniciRepository.save(kullanici);
         }
         return "redirect:/super-admin";
